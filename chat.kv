@@ -1,0 +1,142 @@
+#:import C kivy.utils.get_color_from_hex
+#:import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+
+<BoxLayout>:
+    padding: '5dp'
+    spacing: '5dp'
+
+<GridLayout>:
+    rows: 2
+    cols: 2
+    spacing: '5dp'
+    row_default_height: '45dp'
+    row_force_default: True
+
+<Label>:
+    font_size: '13dp'
+
+<Button>:
+    font_size: '15dp'
+    height: '45dp'
+    size_hint: (1, None)
+    background_normal: 'button_normal.png'
+    background_down: 'button_down.png'
+    border: (2, 2, 2, 2)
+
+<TextInput>:
+    font_size: '15dp'
+    multiline: False
+    #padding: [10, 0.5 * (self.height - self.line_height)]
+
+<ScrollView>:
+    canvas.before:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<ChatLabel@Label>:
+    color: C('#101010')
+    text_size: (self.width, None)
+    halign: 'left'
+    valign: 'top'
+    size_hint: (1, None)
+    height: self.texture_size[1]
+    markup: True
+
+
+ScreenManager:
+    transition: RiseInTransition()
+    
+    Screen:
+        name: 'chooseroom'
+        
+        BoxLayout:
+            orientation: 'vertical'
+        
+            GridLayout:
+                Label:
+                    text: 'Server'    
+                CheckBox:
+                    id: checkServer
+                    group: 'g2'
+                Label:
+                    text: 'Client'
+                CheckBox:
+                    id: checkClient
+                    group: 'g2'
+                
+            Button:
+                text:
+                    'Выбрать'
+                on_press: app.check_choose()
+                
+                                         
+
+    Screen:
+        name: 'login'
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            GridLayout:
+                Label:
+                    text: 'Server:'
+                    size_hint: (0.4, 1)
+
+                TextInput:
+                    id: server
+                    text: '192.168.1.3'
+
+                Label:
+                    text: 'Nickname:'
+                    size_hint: (0.4, 1)
+
+                TextInput:
+                    id: nickname
+                    text: 'Kivy'
+
+            Button:
+                text: 'Подключиться'
+                on_press: app.connect()
+            Button:
+                text: 'Назад'
+                on_press: root.current = 'chooseroom'
+                    
+
+    Screen:
+        name: 'chatroom'
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            Button:
+                text: 'Disconnect'
+                on_press: app.disconnect()
+                background_normal: 'red_button_normal.png'
+                background_down: 'red_button_down.png'
+
+            ScrollView:
+                ChatLabel:
+                    id: chat_logs
+                    text: ''
+
+            BoxLayout:
+                height: 90
+                orientation: 'horizontal'
+                padding: 0
+                size_hint: (1, None)
+
+                TextInput:
+                    padding: [6,6,6,6]
+                    id: message
+                    #on_text_validate: app.send_msg()
+                    multiline: True
+                    keyboard_suggestions: False
+                    
+
+                Button:
+                    text: 'Send'
+                    on_press: app.send_msg()
+                    size_hint: (0.3, 1)                
